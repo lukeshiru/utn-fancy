@@ -7,6 +7,7 @@ Functions to make fancy stuff.
 ### fancyInput(label, type, variable)
 
 Prints the label and reads the value of variable next to it.
+
 ```c
 int number;
 fancyInput("This is the label", "%d", &number); // This displays "This is the label: " and waits user input.
