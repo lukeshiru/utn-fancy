@@ -12,14 +12,24 @@
 
 /* Settings *******************************************************************/
 
-#define FANCY_PADDING 1               // Padding for containers
-#define FANCY_LIST_CHAR "> "          // Menu/List item character
-#define FANCY_PASSWORD_MAX_LENGTH 8   // Max length for passwords
-#define FANCY_PASSWORD_CHARACTER '*'  // Password character
-#define FANCY_INPUT_INT_SUFFIX "+|-"  //
-#define FancyContainer WINDOW*        // Fancier name for ncurses WINDOW
+#define FANCY_PADDING 1               // Padding for containers.
+#define FANCY_LIST_CHAR "> "          // Menu/List item character.
+#define FANCY_PASSWORD_MAX_LENGTH 8   // Max length for passwords.
+#define FANCY_PASSWORD_CHARACTER '*'  // Password character.
+#define FANCY_INPUT_INT_SUFFIX "+|-"  // Suffix for int imputs.
+#define FANCY_INPUT_HEIGHT 1          // Height of inputs.
+#define FANCY_STRING_LIMIT 256        // String upper limit
+#define FancyContainer WINDOW*        // Fancier name for ncurses WINDOW.
 
 /* Utils **********************************************************************/
+
+/**
+ * @brief Throws error and exits program.
+ *
+ * @param errorDescription Description of the error.
+ * @return void*
+ */
+void* fancyError(char* errorDescription);
 
 /**
  * @brief Re-render a FancyContainer.
@@ -34,14 +44,21 @@ FancyContainer fancyUpdate(FancyContainer container);
  *
  * @param visible Should be visible?
  */
-void fancyCursor(const bool visible);
+void* fancyCursorVisible(const bool visible);
 
 /**
  * @brief Enables or disables input echo.
  *
- * @param shouldEcho Should echo?
+ * @param visible Should echo?
  */
-int fancyEcho(const bool shouldEcho);
+void* fancyEchoVisible(const bool visible);
+
+/**
+ * @brief Enables or disables C break (Ctrl. + C / Cmd. + C)
+ *
+ * @param enabled Should CBreak?
+ */
+void* fancyCBreak(const bool enabled);
 
 /**
  * @brief Initialize ncurses (with some default options).
@@ -185,21 +202,12 @@ FancyContainer fancyBorderAdd(FancyContainer container);
 FancyContainer fancyScanString(FancyContainer container, char** value);
 
 /**
- * @brief Scan given value from FancyContainer.
- *
- * @param container FancyContainer to scan from.
- * @return string Scanned value.
- */
-FancyContainer fancyScan(FancyContainer container, char* value);
-
-/**
  * @brief As fancyScan, but only scans ints (up and down for increment and decrement).
  *
  * @param container FancyContainer to scan from.
- * @param number Value where the scan will be stored.
- * @return FancyContainer Scanned FancyContainer.
+ * @return int Scanned value.
  */
-FancyContainer fancyScanInt(FancyContainer container, int* number);
+int fancyScanInt(FancyContainer container);
 
 /**
  * @brief As fancyScan, but for passwords.
@@ -259,7 +267,7 @@ FancyContainer fancyContainer(FancyContainer parent, const int x, const int y, c
  * @param padding Padding value.
  * @return FancyContainer New FancyContainer.
  */
-FancyContainer fancyContainerPadding(FancyContainer parent, const int x, const int y, const int width, const int height, const int padding);
+FancyContainer fancyPadding(FancyContainer parent, const int x, const int y, const int width, const int height, const int padding);
 
 /**
  * @brief Same as FancyContainer, but with a border (using fancyBorderAdd and fancyPadding).
@@ -310,14 +318,23 @@ FancyContainer fancyContainerTitleCentred(FancyContainer parent, const int width
 /* Inputs *********************************************************************/
 
 /**
- * @brief Input (using FancyContainerTitle and fancyScan).
+ * @brief Input base.
+ *
+ * @param parent Parent of the FancyContainer Input
+ * @param label Label of the input
+ * @return FancyContainer FancyContainer Input.
+ */
+FancyContainer fancyInput(FancyContainer parent, const char* label);
+
+/**
+ * @brief Input (using FancyContainerTitle and fancyScanString).
  *
  * @param parent Parent of the FancyContainer Input
  * @param label Label of the input
  * @param string String to store the scanned value.
  * @return FancyContainer FancyContainer Input.
  */
-FancyContainer fancyInput(FancyContainer parent, const char* label, char** value);
+FancyContainer fancyInputString(FancyContainer parent, const char* label, char** value);
 
 /**
  * @brief Link Input, but just for ints (uses fancyScanInt).
