@@ -61,6 +61,14 @@ void* fancyEchoVisible(const bool visible);
 void* fancyCBreak(const bool enabled);
 
 /**
+ * @brief Enables or disables scroll on given container.
+ *
+ * @param target Container target.
+ * @param enabled Should scroll?
+ */
+void* fancyScroll(FancyContainer container, const bool enabled);
+
+/**
  * @brief Initialize ncurses (with some default options).
  *
  * @return FancyContainer The terminal container.
@@ -197,9 +205,10 @@ FancyContainer fancyBorderAdd(FancyContainer container);
  * @brief Scan given value from FancyContainer.
  *
  * @param container FancyContainer to scan from.
- * @return string Scanned value.
+ * @param echoVisible Hide echo or don't.
+ * @return char* Scanned value.
  */
-FancyContainer fancyScanString(FancyContainer container, char** value);
+char* fancyScanString(FancyContainer container, const bool echoVisible);
 
 /**
  * @brief As fancyScan, but only scans ints (up and down for increment and decrement).
@@ -208,15 +217,6 @@ FancyContainer fancyScanString(FancyContainer container, char** value);
  * @return int Scanned value.
  */
 int fancyScanInt(FancyContainer container);
-
-/**
- * @brief As fancyScan, but for passwords.
- *
- * @param container FancyContainer to scan from.
- * @param password Value where the scan will be stored.
- * @return FancyContainer Scanned FancyContainer.
- */
-FancyContainer fancyScanPassword(FancyContainer container, char** password);
 
 /* Print **********************************************************************/
 
@@ -228,7 +228,7 @@ FancyContainer fancyScanPassword(FancyContainer container, char** password);
  * @param ... Values to be printed.
  * @return FancyContainer Updated FancyContainer.
  */
-FancyContainer fancyPrint(FancyContainer container, char* format, ...);
+FancyContainer fancyPrint(FancyContainer container, const char* format, ...);
 
 /**
  * @brief Same as fancyPrint, but with positioning.
@@ -240,7 +240,7 @@ FancyContainer fancyPrint(FancyContainer container, char* format, ...);
  * @param ... Values to be printed.
  * @return FancyContainer Updated FancyContainer.
  */
-FancyContainer fancyPrintXY(FancyContainer container, const int x, const int y, char* format, ...);
+FancyContainer fancyPrintXY(FancyContainer container, const int x, const int y, const char* format, ...);
 
 /* Containers *****************************************************************/
 
@@ -327,34 +327,41 @@ FancyContainer fancyContainerTitleCentred(FancyContainer parent, const int width
 FancyContainer fancyInput(FancyContainer parent, const char* label);
 
 /**
+ * @brief Input base with suffix.
+ *
+ * @param parent Parent of the FancyContainer Input.
+ * @param label Label of the input.
+ * @param suffix Suffix of the input.
+ * @return FancyContainer FancyContainer Input.
+ */
+FancyContainer fancyInputSuffix(FancyContainer parent, const char* label, const char* suffix);
+
+/**
  * @brief Input (using FancyContainerTitle and fancyScanString).
  *
  * @param parent Parent of the FancyContainer Input
  * @param label Label of the input
- * @param string String to store the scanned value.
- * @return FancyContainer FancyContainer Input.
+ * @return char* Input value.
  */
-FancyContainer fancyInputString(FancyContainer parent, const char* label, char** value);
+char* fancyInputString(FancyContainer parent, const char* label);
 
 /**
  * @brief Link Input, but just for ints (uses fancyScanInt).
  *
  * @param parent Parent of the FancyContainer Input
  * @param label Label of the input
- * @param number Value to store the scanned value.
- * @return FancyContainer FancyContainer Input.
+ * @return int Input value.
  */
-FancyContainer fancyInputInt(FancyContainer parent, const char* label, int* number);
+int fancyInputInt(FancyContainer parent, const char* label);
 
 /**
- * @brief Link Input, but just for passwords (uses fancyScanPassword).
+ * @brief Link Input, but just for passwords (uses fancyScanString with no echo).
  *
  * @param parent Parent of the FancyContainer Input
  * @param label Label of the input
- * @param password Value to store the scanned value.
- * @return FancyContainer FancyContainer Input.
+ * @return char* Input value.
  */
-FancyContainer fancyInputPassword(FancyContainer parent, const char* label, char** password);
+char* fancyInputPassword(FancyContainer parent, const char* label);
 
 /**
  * @brief Menu with keyboard control.

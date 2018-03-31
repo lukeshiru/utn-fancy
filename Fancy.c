@@ -24,11 +24,16 @@ void* fancyCBreak(const bool enabled) {
 	return (enabled ? cbreak() : nocbreak()) == ERR ? fancyError("fancyCBreak") : NULL;
 }
 
+void* fancyScroll(FancyContainer container, const bool enabled) {
+	return scrollok(container, enabled) == ERR ? fancyError("fancyScroll") : NULL;
+}
+
 FancyContainer fancyInit() {
 	FancyContainer ui = initscr();  // Initialize ncurses and stores the terminal container.
 	fancyCBreak(true);              // App can be break with Ctrl+C / Cmd+C.
 	fancyCursorVisible(false);      // Cursor is hidden (will be visible in key input).
 	fancyEchoVisible(false);        // Disable echo by default (Turned on on inputs).
+	fancyScroll(ui, true);          // Enable scroll on main container.
 
 	return fancyUpdate(ui);  // Returns the updated terminal container.
 }
@@ -122,7 +127,7 @@ FancyContainer fancyBorderAdd(FancyContainer container) {
 
 /* Scan ***********************************************************************/
 
-FancyContainer fancyScanString(FancyContainer container, char** value) {
+char* fancyScanString(FancyContainer container, const bool echoVisible) {
 	const int width = fancyWidth(container);
 	const int height = fancyHeight(container);
 	const int x = fancyXGet(container);
@@ -130,17 +135,15 @@ FancyContainer fancyScanString(FancyContainer container, char** value) {
 	const int remainingSpace = (width * height) - (y * width + x); // All remaining characters of container
 	const int bufferSize = remainingSpace > FANCY_STRING_LIMIT ? FANCY_STRING_LIMIT : remainingSpace;
 
-	char* buffer = malloc(bufferSize);
+	char* string = malloc(bufferSize);
 
 	fancyCursorVisible(true);
-	fancyEchoVisible(true);
-	wgetnstr(container, buffer, bufferSize);
+	fancyEchoVisible(echoVisible);
+	wgetnstr(container, string, bufferSize);
 	fancyCursorVisible(false);
-	fancyEchoVisible(false);
+	fancyEchoVisible(!echoVisible);
 
-	*value = buffer;
-
-	return fancyUpdate(container);
+	return string;
 }
 
 int fancyScanInt(FancyContainer container) {
@@ -185,23 +188,9 @@ int fancyScanInt(FancyContainer container) {
 	return number;
 }
 
-FancyContainer fancyScanPassword(FancyContainer container, char** value) {
-	const int bufferSize = fancyWidth(container);
-
-	char* buffer = malloc(bufferSize);
-
-	fancyCursorVisible(true);
-	wgetnstr(container, buffer, bufferSize);
-	fancyCursorVisible(false);
-
-	*value = buffer;
-
-	return fancyUpdate(container);
-}
-
 /* Print **********************************************************************/
 
-FancyContainer fancyPrint(FancyContainer container, char* format, ...) {
+FancyContainer fancyPrint(FancyContainer container, const char* format, ...) {
 	va_list args;
 	va_start(args, format);
 	vwprintw(container, format, args);
@@ -210,7 +199,7 @@ FancyContainer fancyPrint(FancyContainer container, char* format, ...) {
 	return fancyUpdate(container);
 }
 
-FancyContainer fancyPrintXY(FancyContainer container, const int x, const int y, char* format, ...) {
+FancyContainer fancyPrintXY(FancyContainer container, const int x, const int y, const char* format, ...) {
 	va_list args;
 	va_start(args, format);
 	vwprintw(fancyXYSet(container, x, y), format, args);
@@ -228,6 +217,7 @@ FancyContainer fancyContainer(FancyContainer parent, const int x, const int y, c
 	const int fixedHeight = y + height > parentHeight ? (parentHeight - y - FANCY_PADDING) : height;
 	FancyContainer container = derwin(parent, fixedHeight, fixedWidth, y, x);
 	wclear(container);  // Clear bounds of container to be displayed above other containers.
+	fancyScroll(container, true);
 
 	return fancyUpdate(container);
 }
@@ -274,39 +264,48 @@ FancyContainer fancyInput(FancyContainer parent, const char* label) {
 	const int height = FANCY_PADDING * 2 + FANCY_INPUT_HEIGHT;
 
 	FancyContainer input = fancyContainerTitle(parent, x, y, fancyXMax(parent) - x, height, label);
+	fancyScroll(input, false);
 
 	return fancyUpdate(input);
 }
 
-FancyContainer fancyInputString(FancyContainer parent, const char* label, char** value) {
+FancyContainer fancyInputSuffix(FancyContainer parent, const char* label, const char* suffix) {
 	FancyContainer input = fancyInput(parent, label);
 
-	fancyScanString(input, value);
-	fancyXYSet(parent, 0, fancyYGet(parent) + fancyHeight(input) + (FANCY_PADDING * 2));
-
-	return fancyUpdate(input);
-}
-
-FancyContainer fancyInputInt(FancyContainer parent, const char* label, int* number) {
-	const int suffixSize = sizeof(FANCY_INPUT_INT_SUFFIX);
-
-	FancyContainer input = fancyInput(parent, label);
-
-	fancyPrintXY(input, -(suffixSize), 0, FANCY_INPUT_INT_SUFFIX);
+	fancyPrintXY(input, -(strlen(suffix)), 0, "%s", suffix);
 	fancyXSet(input, 0);
-	*number = fancyScanInt(input);
-	fancyXYSet(parent, 0, fancyYGet(parent) + fancyHeight(input) + (FANCY_PADDING * 2));
-
-	return fancyUpdate(input);
-}
-
-FancyContainer fancyInputPassword(FancyContainer parent, const char* label, char** password) {
-	FancyContainer input = fancyInput(parent, label);
-
-	fancyScanPassword(input, password);
-	fancyXYSet(parent, 0, fancyYGet(parent) + fancyHeight(input) + (FANCY_PADDING * 2));
 
 	return input;
+}
+
+char* fancyInputString(FancyContainer parent, const char* label) {
+	FancyContainer input = fancyInput(parent, label);
+	char* string = "";
+
+	string = fancyScanString(input, true);
+	fancyXYSet(parent, 0, fancyYGet(parent) + fancyHeight(input) + (FANCY_PADDING * 2));
+
+	return string;
+}
+
+int fancyInputInt(FancyContainer parent, const char* label) {
+	FancyContainer input = fancyInputSuffix(parent, label, FANCY_INPUT_INT_SUFFIX);
+	int number = 0;
+
+	number = fancyScanInt(input);
+	fancyXYSet(parent, 0, fancyYGet(parent) + fancyHeight(input) + (FANCY_PADDING * 2));
+
+	return number;
+}
+
+char* fancyInputPassword(FancyContainer parent, const char* label) {
+	FancyContainer input = fancyInput(parent, label);
+	char* password = "";
+
+	password = fancyScanString(input, false);
+	fancyXYSet(parent, 0, fancyYGet(parent) + fancyHeight(input) + (FANCY_PADDING * 2));
+
+	return password;
 }
 
 int fancyInputMenu(FancyContainer parent, const char* choices[], int choicesLength) {
