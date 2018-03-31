@@ -68,7 +68,7 @@ void* fancyCBreak(const bool enabled);
 void* fancyScroll(FancyContainer container, const bool enabled);
 
 /**
- * @brief Initialize ncurses (with some default options).
+ * @brief Initializes and returns a FancyContainer.
  *
  * @return FancyContainer The terminal container.
  */
@@ -98,7 +98,7 @@ int fancyXGet(FancyContainer container);
 int fancyYGet(FancyContainer container);
 
 /**
- * @brief Get max X for given FancyContainer.
+ * @brief Get max X position for given FancyContainer.
  *
  * @param container FancyContainer to be evaluated.
  * @return int Max X value.
@@ -106,7 +106,7 @@ int fancyYGet(FancyContainer container);
 int fancyXMax(FancyContainer container);
 
 /**
- * @brief Get max Y for given FancyContainer.
+ * @brief Get max Y position for given FancyContainer.
  *
  * @param container FancyContainer to be evaluated.
  * @return int Max Y value.
@@ -114,7 +114,7 @@ int fancyXMax(FancyContainer container);
 int fancyYMax(FancyContainer container);
 
 /**
- * @brief Set current X position to given FancyContainer.
+ * @brief Set current X position for given FancyContainer.
  *
  * @param container FancyContainer to updated.
  * @param x X Position to be set.
@@ -123,7 +123,7 @@ int fancyYMax(FancyContainer container);
 FancyContainer fancyXSet(FancyContainer container, const int x);
 
 /**
- * @brief Set current Y position to given FancyContainer.
+ * @brief Set current Y position for given FancyContainer.
  *
  * @param container FancyContainer to updated.
  * @param y Y Position to be set.
@@ -132,7 +132,7 @@ FancyContainer fancyXSet(FancyContainer container, const int x);
 FancyContainer fancyYSet(FancyContainer container, const int y);
 
 /**
- * @brief Set current X and Y position to given FancyContainer.
+ * @brief Set current X and Y position for given FancyContainer.
  *
  * @param container FancyContainer to updated.
  * @param x X Position to be set.
@@ -142,7 +142,7 @@ FancyContainer fancyYSet(FancyContainer container, const int y);
 FancyContainer fancyXYSet(FancyContainer container, const int x, const int y);
 
 /**
- * @brief Get Minimal X value for given FancyContainer.
+ * @brief Get min X position for given FancyContainer.
  *
  * @param container FancyContainer to be evaluated.
  * @return int Minimal X value.
@@ -150,7 +150,7 @@ FancyContainer fancyXYSet(FancyContainer container, const int x, const int y);
 int fancyXMin(FancyContainer container);
 
 /**
- * @brief Get Minimal Y value for given FancyContainer.
+ * @brief Get min Y position for given FancyContainer.
  *
  * @param container FancyContainer to be evaluated.
  * @return int Minimal Y value.
@@ -176,19 +176,29 @@ int fancyHeight(FancyContainer container);
 /**
  * @brief Difference between given values (for center calculation).
  *
- * @param container Container length (width or height).
- * @param child Child length (width or height).
+ * @param parentSize Parent size (width or height).
+ * @param childSize Child size (width or height).
  * @return int Difference value.
  */
-int fancyRelativeCenter(const int container, const int child);
+int fancyRelativeCenter(const int parentSize, const int childSize);
 
 /**
- * @brief Attaches character to string.
- *
- * @param string String to be extended.
- * @param character Character to be added.
+ * @brief Securely add 2 int values.
+ * 
+ * @param value1 Value 1 to be added.
+ * @param value2 Value 2 to be added.
+ * @return int Secure result.
  */
-// void fancyConcatChar(char** value, const char character);
+int fancyAddSecure(int value1, int value2);
+
+/**
+ * @brief Securely multiply 2 int values.
+ * 
+ * @param value1 Value 1 to be multiplied.
+ * @param value2 Value 2 to be multiplied.
+ * @return int Secure result.
+ */
+int fancyMultiplySecure(int value1, int value2);
 
 /**
  * @brief Add border to given FancyContainer.
@@ -201,7 +211,7 @@ FancyContainer fancyBorderAdd(FancyContainer container);
 /* Scan ***********************************************************************/
 
 /**
- * @brief Scan given value from FancyContainer.
+ * @brief Scan string from given FancyContainer and returns it.
  *
  * @param container FancyContainer to scan from.
  * @param echoVisible Hide echo or don't.
@@ -210,7 +220,7 @@ FancyContainer fancyBorderAdd(FancyContainer container);
 char* fancyScanString(FancyContainer container, const bool echoVisible);
 
 /**
- * @brief As fancyScan, but only scans ints (up and down for increment and decrement).
+ * @brief Scan int from given FancyContainer and returns it.
  *
  * @param container FancyContainer to scan from.
  * @return int Scanned value.
@@ -220,7 +230,7 @@ int fancyScanInt(FancyContainer container);
 /* Print **********************************************************************/
 
 /**
- * @brief Print given value to given FancyContainer.
+ * @brief Print in current position of given FancyContainer.
  *
  * @param container FancyContainer to be printed on.
  * @param format Format of the string to be printed.
@@ -230,7 +240,7 @@ int fancyScanInt(FancyContainer container);
 FancyContainer fancyPrint(FancyContainer container, const char* format, ...);
 
 /**
- * @brief Same as fancyPrint, but with positioning.
+ * @brief Print in given position (x, y) of given FancyContainer.
  *
  * @param container FancyContainer to be printed on.
  * @param x X Position.
@@ -256,7 +266,7 @@ FancyContainer fancyPrintXY(FancyContainer container, const int x, const int y, 
 FancyContainer fancyContainer(FancyContainer parent, const int x, const int y, const int width, const int height);
 
 /**
- * @brief Same as FancyContainer, but with a padding.
+ * @brief Creates a new FancyContainer with given padding.
  *
  * @param parent Parent of the FancyContainer.
  * @param x X position
@@ -269,7 +279,7 @@ FancyContainer fancyContainer(FancyContainer parent, const int x, const int y, c
 FancyContainer fancyPadding(FancyContainer parent, const int x, const int y, const int width, const int height, const int padding);
 
 /**
- * @brief Same as FancyContainer, but with a border (using fancyBorderAdd and fancyPadding).
+ * @brief Creates a new FancyContainer with border.
  *
  * @param parent Parent of the FancyContainer.
  * @param x X position
@@ -281,7 +291,7 @@ FancyContainer fancyPadding(FancyContainer parent, const int x, const int y, con
 FancyContainer fancyContainerBorder(FancyContainer parent, const int x, const int y, const int width, const int height);
 
 /**
- * @brief Same as FancyContainerBorder, but with a title (using fancyContainerBorder and fancyPrintXY).
+ * @brief Creates a new FancyContainer with border and title.
  *
  * @param parent Parent of the FancyContainer.
  * @param x X position
@@ -294,7 +304,7 @@ FancyContainer fancyContainerBorder(FancyContainer parent, const int x, const in
 FancyContainer fancyContainerTitle(FancyContainer parent, const int x, const int y, const int width, const int height, const char* title);
 
 /**
- * @brief Same as FancyContainerBorder, but centred in parent (using fancyRelativeCenter).
+ * @brief Creates a new FancyContainer with border and centred in parent.
  *
  * @param parent Parent of the FancyContainer.
  * @param width Width (in cols).
@@ -304,7 +314,7 @@ FancyContainer fancyContainerTitle(FancyContainer parent, const int x, const int
 FancyContainer fancyContainerBorderCentred(FancyContainer parent, const int width, const int height);
 
 /**
- * @brief Same as FancyContainerTitle, but centred in parent (using fancyRelativeCenter).
+ * @brief Creates a new FancyContainer with border and title and centred in parent.
  *
  * @param parent Parent of the FancyContainer.
  * @param width Width (in cols).
@@ -326,17 +336,7 @@ FancyContainer fancyContainerTitleCentred(FancyContainer parent, const int width
 FancyContainer fancyInput(FancyContainer parent, const char* label);
 
 /**
- * @brief Input base with suffix.
- *
- * @param parent Parent of the FancyContainer Input.
- * @param label Label of the input.
- * @param suffix Suffix of the input.
- * @return FancyContainer FancyContainer Input.
- */
-FancyContainer fancyInputSuffix(FancyContainer parent, const char* label, const char* suffix);
-
-/**
- * @brief Input (using FancyContainerTitle and fancyScanString).
+ * @brief Creates a new FancyContainer for string input and returns scanned value.
  *
  * @param parent Parent of the FancyContainer Input
  * @param label Label of the input
@@ -345,7 +345,7 @@ FancyContainer fancyInputSuffix(FancyContainer parent, const char* label, const 
 char* fancyInputString(FancyContainer parent, const char* label);
 
 /**
- * @brief Link Input, but just for ints (uses fancyScanInt).
+ * @brief Creates a new FancyContainer for int input and returns scanned value.
  *
  * @param parent Parent of the FancyContainer Input
  * @param label Label of the input
@@ -354,7 +354,7 @@ char* fancyInputString(FancyContainer parent, const char* label);
 int fancyInputInt(FancyContainer parent, const char* label);
 
 /**
- * @brief Link Input, but just for passwords (uses fancyScanString with no echo).
+ * @brief Creates a new FancyContainer for string input with no output (for passwords) and returns scanned value.
  *
  * @param parent Parent of the FancyContainer Input
  * @param label Label of the input
@@ -363,7 +363,7 @@ int fancyInputInt(FancyContainer parent, const char* label);
 char* fancyInputPassword(FancyContainer parent, const char* label);
 
 /**
- * @brief Menu with keyboard control.
+ * @brief Displays a menu with arrow selection and returns the selected index of the array of choices.
  *
  * @param parent Parent of the FancyContainer Menu.
  * @param choices Array of strings for the choices.

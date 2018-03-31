@@ -104,18 +104,18 @@ int fancyHeight(FancyContainer container) {
 	return fancyYMax(container) - fancyYMin(container);
 }
 
-int fancyRelativeCenter(const int container, const int child) {
-	const int relativeCenter = (container - child) / 2;
+int fancyRelativeCenter(const int parentSize, const int childSize) {
+	const int relativeCenter = (parentSize - childSize) / 2;
 	return relativeCenter < 0 ? 0 : relativeCenter;
 }
 
-int fancyAdd(int value1, int value2) {
+int fancyAddSecure(int value1, int value2) {
 	const signed long int result = (signed long int)value1 + (signed long int)value2;
 
 	return result > INT_MAX ? INT_MAX : result < INT_MIN ? INT_MIN : (int)result;
 }
 
-int fancyMultiply(int value1, int value2) {
+int fancyMultiplySecure(int value1, int value2) {
 	const signed long int result = (signed long int)value1 * (signed long int)value2;
 
 	return result > INT_MAX ? INT_MAX : result < INT_MIN ? INT_MIN : (int)result;
@@ -163,7 +163,7 @@ int fancyScanInt(FancyContainer container) {
 		int keyValue = key - 48;
 		switch (keyValue) {
 			/* 0-9 */ case 0 ... 9:
-				number = (number == 0) ? keyValue : fancyAdd(fancyMultiply(number, 10), (number < 0 ? -keyValue : keyValue));
+				number = (number == 0) ? keyValue : fancyAddSecure(fancyMultiplySecure(number, 10), (number < 0 ? -keyValue : keyValue));
 				break;
 			/* Backspace */ case 79:
 				number = number / 10;
@@ -179,8 +179,8 @@ int fancyScanInt(FancyContainer container) {
 				break;
 		}
 
-		wclear(container);
 		fancyPrintXY(container, x, y, "%d", number);
+		wclrtoeol(container);
 
 		running = (key != 10);
 	}
