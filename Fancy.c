@@ -1,6 +1,6 @@
 #include "Fancy.h"
 
-/* Utils **********************************************************************/
+/* Base ***********************************************************************/
 
 void* fancyError(char* errorDescription) {
 	endwin();                                // Finishes ncurses.
@@ -38,13 +38,17 @@ FancyContainer fancyInit() {
 	return fancyUpdate(ui);  // Returns the updated terminal container.
 }
 
-int fancyEnd() {
-	getch();                   // Captures a key before exit.
+int fancyEnd(const bool wait) {
+	if (wait) {
+		getch();                   // Captures a key before exit.
+	}
 	fancyCursorVisible(true);  // Makes cursor visible.
 	fancyEchoVisible(true);    // Makes echo visible.
 
 	return endwin();  // Finishes ncurses.
 }
+
+/* Utils **********************************************************************/
 
 int fancyXGet(FancyContainer container) {
 	return getcurx(container);
@@ -125,6 +129,11 @@ FancyContainer fancyBorderAdd(FancyContainer container) {
 	box(container, 0, 0);
 
 	return fancyUpdate(container);
+}
+
+FancyContainer fancyClear(FancyContainer container) {
+	wclear(container);
+	return container;
 }
 
 /* Scan ***********************************************************************/
@@ -219,8 +228,7 @@ FancyContainer fancyContainer(FancyContainer parent, const int x, const int y, c
 	const int fixedWidth = x + width > parentWidth ? (parentWidth - x - FANCY_PADDING) : width;
 	const int fixedHeight = y + height > parentHeight ? (parentHeight - y - FANCY_PADDING) : height;
 	FancyContainer container = derwin(parent, fixedHeight, fixedWidth, y, x);
-	wclear(container);  // Clear bounds of container to be displayed above other containers.
-	fancyScroll(container, true);
+	fancyScroll(fancyClear(container), true);
 
 	return fancyUpdate(container);
 }

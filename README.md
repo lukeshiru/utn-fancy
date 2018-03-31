@@ -44,10 +44,10 @@ FancyContainer containerExample = fancyContainer(ui, x, y, width, height);
 
 ## Functions
 
-### Initialization and end
+### Base
 
 - `fancyInit()` - Initializes [ncurses](https://www.gnu.org/software/ncurses/) and returns a FancyContainer.
-- `fancyEnd()` - Closes [ncurses](https://www.gnu.org/software/ncurses/) and waits for user input.
+- `fancyEnd(wait)` - Closes [ncurses](https://www.gnu.org/software/ncurses/) and waits for user input (if true).
 
 ### Utils
 
@@ -63,6 +63,7 @@ FancyContainer containerExample = fancyContainer(ui, x, y, width, height);
 - `fancyWidth(container)` - Get width of given FancyContainer.
 - `fancyHeight(container)` - Get height of given FancyContainer.
 - `fancyBorderAdd(container)` - Add border to given FancyContainer.
+- `fancyClear(container)` - Clear given container.
 
 ### Scan
 

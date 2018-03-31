@@ -20,7 +20,7 @@
 #define FANCY_STRING_LIMIT 256        // String upper limit
 #define FancyContainer WINDOW*        // Fancier name for ncurses WINDOW.
 
-/* Utils **********************************************************************/
+/* Base ***********************************************************************/
 
 /**
  * @brief Throws error and exits program.
@@ -79,7 +79,9 @@ FancyContainer fancyInit();
  *
  * @return int Status code.
  */
-int fancyEnd();
+int fancyEnd(const bool wait);
+
+/* Utils **********************************************************************/
 
 /**
  * @brief Get current X position for given FancyContainer.
@@ -184,7 +186,7 @@ int fancyRelativeCenter(const int parentSize, const int childSize);
 
 /**
  * @brief Securely add 2 int values.
- * 
+ *
  * @param value1 Value 1 to be added.
  * @param value2 Value 2 to be added.
  * @return int Secure result.
@@ -193,7 +195,7 @@ int fancyAddSecure(int value1, int value2);
 
 /**
  * @brief Securely multiply 2 int values.
- * 
+ *
  * @param value1 Value 1 to be multiplied.
  * @param value2 Value 2 to be multiplied.
  * @return int Secure result.
@@ -207,6 +209,13 @@ int fancyMultiplySecure(int value1, int value2);
  * @return FancyContainer Updated FancyContainer.
  */
 FancyContainer fancyBorderAdd(FancyContainer container);
+
+/**
+ * @brief Clear given container.
+ *
+ * @param container FancyContainer to be cleared.
+ */
+FancyContainer fancyClear(FancyContainer container);
 
 /* Scan ***********************************************************************/
 
