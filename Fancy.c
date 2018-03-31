@@ -110,13 +110,15 @@ int fancyRelativeCenter(const int container, const int child) {
 }
 
 int fancyAdd(int value1, int value2) {
-	return (value1 > 0 && value2 > INT_MAX - value1) ? INT_MAX : (value1 < 0 && value2 < INT_MIN - value1) ? INT_MIN : value1 + value2;
+	const signed long int result = (signed long int)value1 + (signed long int)value2;
+
+	return result > INT_MAX ? INT_MAX : result < INT_MIN ? INT_MIN : (int)result;
 }
 
 int fancyMultiply(int value1, int value2) {
-	const int product = value1 * value2;
+	const signed long int result = (signed long int)value1 * (signed long int)value2;
 
-	return (product < value1 || product < value2) ? INT_MAX : product;
+	return result > INT_MAX ? INT_MAX : result < INT_MIN ? INT_MIN : (int)result;
 }
 
 FancyContainer fancyBorderAdd(FancyContainer container) {
@@ -161,7 +163,7 @@ int fancyScanInt(FancyContainer container) {
 		int keyValue = key - 48;
 		switch (keyValue) {
 			/* 0-9 */ case 0 ... 9:
-				number = (number == 0) ? keyValue : fancyAdd(fancyMultiply(number, 10), keyValue);
+				number = (number == 0) ? keyValue : fancyAdd(fancyMultiply(number, 10), (number < 0 ? -keyValue : keyValue));
 				break;
 			/* Backspace */ case 79:
 				number = number / 10;
@@ -177,7 +179,8 @@ int fancyScanInt(FancyContainer container) {
 				break;
 		}
 
-		fancyPrintXY(container, x, y, "%d \b", number);
+		wclear(container);
+		fancyPrintXY(container, x, y, "%d", number);
 
 		running = (key != 10);
 	}
@@ -269,15 +272,6 @@ FancyContainer fancyInput(FancyContainer parent, const char* label) {
 	return fancyUpdate(input);
 }
 
-FancyContainer fancyInputSuffix(FancyContainer parent, const char* label, const char* suffix) {
-	FancyContainer input = fancyInput(parent, label);
-
-	fancyPrintXY(input, -(strlen(suffix)), 0, "%s", suffix);
-	fancyXSet(input, 0);
-
-	return input;
-}
-
 char* fancyInputString(FancyContainer parent, const char* label) {
 	FancyContainer input = fancyInput(parent, label);
 	char* string = "";
@@ -289,7 +283,7 @@ char* fancyInputString(FancyContainer parent, const char* label) {
 }
 
 int fancyInputInt(FancyContainer parent, const char* label) {
-	FancyContainer input = fancyInputSuffix(parent, label, FANCY_INPUT_INT_SUFFIX);
+	FancyContainer input = fancyInput(parent, label);
 	int number = 0;
 
 	number = fancyScanInt(input);

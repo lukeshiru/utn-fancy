@@ -16,7 +16,6 @@
 #define FANCY_LIST_CHAR "> "          // Menu/List item character.
 #define FANCY_PASSWORD_MAX_LENGTH 8   // Max length for passwords.
 #define FANCY_PASSWORD_CHARACTER '*'  // Password character.
-#define FANCY_INPUT_INT_SUFFIX "+|-"  // Suffix for int imputs.
 #define FANCY_INPUT_HEIGHT 1          // Height of inputs.
 #define FANCY_STRING_LIMIT 256        // String upper limit
 #define FancyContainer WINDOW*        // Fancier name for ncurses WINDOW.
