@@ -19,7 +19,7 @@
 #define FANCY_INPUT_HEIGHT 1             // Height of inputs.
 #define FANCY_STRING_LIMIT 256           // String upper limit
 #define FANCY_MENU_HIGHLIGHTED A_REVERSE // Effect for highlighted menu items.
-#define FANCY_END "\0END\0"              // End marker for lists.
+#define FANCY_END "_FANCY_END"           // End marker for lists.
 #define FancyContainer WINDOW*           // Fancier name for ncurses WINDOW.
 
 /* Base ***********************************************************************/
