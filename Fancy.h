@@ -224,6 +224,13 @@ FancyContainer fancyBorderAdd(FancyContainer container);
  */
 FancyContainer fancyClear(FancyContainer container);
 
+/**
+ * @brief Gets the length of an array with a FANCY_END marker.
+ * 
+ * @param array Array to be measured.
+ */
+int fancyArrayLength(const void* array[]);
+
 /* Scan ***********************************************************************/
 
 /**

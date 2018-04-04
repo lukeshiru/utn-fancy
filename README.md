@@ -66,6 +66,7 @@ FancyContainer containerExample = fancyContainer(ui, x, y, width, height);
 - `fancyHeight(container)` - Get height of given FancyContainer.
 - `fancyBorderAdd(container)` - Add border to given FancyContainer.
 - `fancyClear(container)` - Clear given container.
+- `fancyArrayLength(array[])` - Gets the length of an array with a FANCY_END marker.
 
 ### Scan
 

@@ -136,6 +136,14 @@ FancyContainer fancyClear(FancyContainer container) {
 	return container;
 }
 
+int fancyArrayLength(const void* array[]) {
+	int length = 0;
+	
+	while (array[length++] != FANCY_END) {}
+	
+	return length - 1;
+}
+
 /* Scan ***********************************************************************/
 
 char* fancyScanString(FancyContainer container, const bool echoVisible) {
@@ -313,19 +321,18 @@ char* fancyInputPassword(FancyContainer parent, const char* label) {
 int fancyInputMenu(FancyContainer parent, const char* choices[]) {
 	const int x = fancyXGet(parent);
 	const int y = fancyYGet(parent);
+	const int choicesLength = fancyArrayLength((void*)choices);
 
 	bool running = true;
 	int choice = 0;
-	int index = 0;
 
 	keypad(parent, true);
 
 	while (running) {
 		int key = 0;
+		int index = 0;
 		
-		index = 0;
-		
-		while (choices[index] != FANCY_END) {
+		while (index < choicesLength) {
 			const int effect = index == choice ? FANCY_MENU_HIGHLIGHTED : A_NORMAL;
 			wattron(parent, effect);
 			fancyPrintXY(parent, x, y + index, "%s%s ", FANCY_LIST_CHAR, choices[index]);
@@ -334,12 +341,12 @@ int fancyInputMenu(FancyContainer parent, const char* choices[]) {
 		}
 
 		key = wgetch(parent);
-		choice = (key == KEY_UP) ? (choice - 1 < 0 ? index : choice) - 1
-		                         : (key == KEY_DOWN) ? choice + 1 >= index ? 0 : choice + 1 : choice;
+		choice = (key == KEY_UP) ? (choice - 1 < 0 ? choicesLength : choice) - 1
+		                         : (key == KEY_DOWN) ? choice + 1 >= choicesLength ? 0 : choice + 1 : choice;
 		running = (key != 10);
 	}
 
-	fancyUpdate(fancyXYSet(parent, x, y + index));
+	fancyUpdate(fancyXYSet(parent, x, y + choicesLength));
 
 	return choice;
 }
