@@ -6,21 +6,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Include guard
-#ifndef FANCY_H
+#ifndef FANCY_H  // Include guard
 #define FANCY_H
 
 /* Settings *******************************************************************/
 
-#define FANCY_PADDING 1                  // Padding for containers.
-#define FANCY_LIST_CHAR "> "             // Menu/List item character.
-#define FANCY_PASSWORD_MAX_LENGTH 8      // Max length for passwords.
-#define FANCY_PASSWORD_CHARACTER '*'     // Password character.
-#define FANCY_INPUT_HEIGHT 1             // Height of inputs.
-#define FANCY_STRING_LIMIT 256           // String upper limit
-#define FANCY_MENU_HIGHLIGHTED A_REVERSE // Effect for highlighted menu items.
-#define FANCY_END "_FANCY_END"           // End marker for lists.
-#define FancyContainer WINDOW*           // Fancier name for ncurses WINDOW.
+#define FANCY_PADDING 1                   // Padding for containers.
+#define FANCY_LIST_CHAR "> "              // Menu/List item character.
+#define FANCY_PASSWORD_MAX_LENGTH 8       // Max length for passwords.
+#define FANCY_PASSWORD_CHARACTER '*'      // Password character.
+#define FANCY_INPUT_HEIGHT 1              // Height of inputs.
+#define FANCY_STRING_LIMIT 256            // String upper limit
+#define FANCY_MENU_HIGHLIGHTED A_REVERSE  // Effect for highlighted menu items.
+#define FANCY_END "_FANCY_END"            // End marker for lists.
+#define FancyContainer WINDOW*            // Fancier name for ncurses WINDOW.
 
 /* Base ***********************************************************************/
 
