@@ -12,7 +12,7 @@ Functions to make fancy stuff.
 #include "Fancy/Fancy.h"
 
 int main() {
-  const char* choices[] = {"Option 1", "Option 2", "Option 3"};
+  const char* choices[] = {"Option 1", "Option 2", "Option 3", FANCY_END};
 
   FancyContainer app = fancyInit();
   FancyContainer loginWindow = fancyContainerTitleCentred(app, 50, 8, "Login");
@@ -25,7 +25,7 @@ int main() {
 
   FancyContainer menuWindow = fancyContainerTitleCentred(app, 50, 20, "Options");
   fancyPrint(menuWindow, "Welcome, %s!\n", username);
-  fancyPrint(menuWindow, "\nThe Selected option was: %s\n", choices[fancyInputMenu(menuWindow, choices, 3)]);
+  fancyPrint(menuWindow, "\nThe Selected option was: %s\n", choices[fancyInputMenu(menuWindow, choices)]);
   number = fancyInputInt(menuWindow, "Number");
   fancyPrint(menuWindow, "Number was: %d", number);
 
@@ -91,4 +91,4 @@ FancyContainer containerExample = fancyContainer(ui, x, y, width, height);
 - `fancyInputString(parent, label)` - Creates a new FancyContainer for string input and returns scanned value.
 - `fancyInputInt(parent, label)` - Creates a new FancyContainer for int input and returns scanned value.
 - `fancyInputPassword(parent, label)` - Creates a new FancyContainer for string input with no output (for passwords) and returns scanned value.
-- `fancyInputMenu(parent, choices[], choicesLength)` - Displays a menu with arrow selection and returns the selected index of the array of choices.
+- `fancyInputMenu(parent, choices[])` - Displays a menu with arrow selection and returns the selected index of the array of choices.
