@@ -1,5 +1,7 @@
 # UTN Fancy
 
+[![[Build Status]](https://img.shields.io/travis/lukeshiru/utn-fancy.svg?style=flat-square)](https://travis-ci.org/lukeshiru/utn-fancy)
+
 Functions to make fancy stuff.
 
 ## Example
